@@ -48,9 +48,10 @@ The projects I own live in `projects/`, one file per project, with no separate i
 
 ## Tasks
 
-Only tasks that change files or take several steps are recorded in the day's `task/YYYY-MM-DD.md`; plain Q&A is not. Log format, statuses and detail docs follow the [daily-log](skills/daily-log/SKILL.md) skill; load it before writing anything under `task/`. A few red lines:
+Plain Q&A gets no task; anything that executes or changes something (editing files, running state-changing operations, multi-step work) is recorded in the day's `task/YYYY-MM-DD.md`. Log format, statuses and detail docs follow the [daily-log](skills/daily-log/SKILL.md) skill; load it before writing anything under `task/`. A few red lines:
 
-- **Do the work first, no need to ask**. When done, ask at the end of your reply whether to record it as a task; **only add it if the user says so**.
+- **Have a task before acting, without asking**: before starting, run `bin/unfinished_tasks.py`; if this work continues an unfinished task, use that one (set it to `[/]`); otherwise create one in today's log first, then start. Say in your reply which task it was recorded as.
+- **Usually one task per session**: follow-up requests in the same session that belong to the same thing go on that task; only something clearly unrelated gets a new task, and say why it was split.
 - **In progress when starting, Review when a human needs to look**: when you start on a task, change it to `[/]` in progress first; when it needs my decision, or is done, change it to `[?]` Review yourself and write down what I need to look at.
 - **`[x]` needs the user's consent**: when done, ask whether it can be marked done and stay in Review until I agree. Other statuses you may change yourself; tell the user when you do.
 - **When a task goes blocked, offer to watch it**: when a task becomes `[!]` (waiting on someone or an external condition), check whether [follow-up](skills/follow-up/SKILL.md) can watch that condition automatically; if it can, ask the user in your reply whether to add a follow-up item, and add it only if they agree; if it can't, say why and what would be needed. See "When a task goes blocked" in daily-log.

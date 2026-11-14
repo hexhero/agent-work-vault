@@ -152,10 +152,14 @@ Tasks linked to a project.
 
 ### Recording a task
 
-1. Run `bin/unfinished_tasks.py` first (`-p` for a project, `--ref` for a ticket number): if this work continues an unfinished task, suggest linking it to that one and update the original entry instead of starting a new one.
-2. Only add it when the user says so. When backfilling, the start time is when work started; take the ID from `bin/unfinished_tasks.py --next-id`; if you know who assigned it, add a reporter tag at the end (see "Reporter").
-3. When adding, splitting or merging tasks, tell the user exactly which ones were added / split / merged and why.
-4. Follow-up steps of the same thing (first an idea, then research, then a refined plan) are the same task: update the original entry. The follow-up content goes on in the project log for project tasks, or in the same detail doc if there is one.
+Record proactively, without asking the user:
+
+1. **When**: plain Q&A (explaining, "look this up and tell me", advice) gets no task; anything that executes or changes something (editing files, running state-changing operations, multi-step work) is recorded before work starts.
+2. **Look for an existing one first**: run `bin/unfinished_tasks.py` (`-p` for a project, `--ref` for a ticket number). If this work continues an unfinished task (the same thing, the same ticket, the task in progress on that project), use it: set it to `[/]` instead of starting a new entry.
+3. **Otherwise create one, then work**: the start time is when work starts; take the ID from `bin/unfinished_tasks.py --next-id`; if you know who assigned it, add a reporter tag at the end (see "Reporter"); a project task gets its "Project" line. Afterwards say in your reply "recorded as T-n".
+4. **Usually one task per session**: follow-up requests in the same session that belong to the same thing go on that task; only something clearly unrelated gets a new task, and say why it was split.
+5. When adding, splitting or merging tasks, tell the user exactly which ones were added / split / merged and why.
+6. Follow-up steps of the same thing (first an idea, then research, then a refined plan) are the same task: update the original entry. The follow-up content goes on in the project log for project tasks, or in the same detail doc if there is one.
 
 ### Marking done
 
