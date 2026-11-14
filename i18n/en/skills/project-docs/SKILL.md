@@ -127,6 +127,16 @@ Plan and progress live in the "Phases and progress" section of `design.md`, one 
 ```
 
 - The phase in progress may expand into a milestone table; a finished phase collapses into one row, with details in the project log.
+- **The milestone table says "Who"**: when breaking a phase into milestones and tasks, decide for each one who does it, per "Sub-agents and cheaper models" in CLAUDE.md, and fill in the "Who" column: `User`, `AI` (main session), `AI sub-agent (haiku / sonnet)`. Well-scoped, easily verified mechanical work goes to a sub-agent on a cheaper model; judgement, user decisions and outward actions stay in the main session.
+
+  ```markdown
+  | Milestone | Who | Status |
+  | --- | --- | --- |
+  | 1. Agree the CSV columns | User | Done |
+  | 2. Implement the export endpoint | AI | In progress |
+  | 3. Add 20 test cases for export formats | AI sub-agent (sonnet) | Not started |
+  | 4. Rename the old field names across the docs | AI sub-agent (haiku) | Not started |
+  ```
 - Every status change gets an entry in the project log. The main file's "Current status" is one sentence pointing to this table.
 - A small project without phases doesn't need a Design just for a progress table; the main file's "Current status" line is enough.
 

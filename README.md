@@ -13,6 +13,8 @@ It grew out of a real working setup used every day by a backend engineer, with e
 - **Daily log** (`task/YYYY-MM-DD.md`): a cross-project to-do list with statuses (not started / in progress / Review / blocked / done / cancelled), stable task IDs (`T-12`), reporter tags, plus a log and an event stream. The agent moves tasks to Review when it needs you, and never marks anything done without your consent.
 - **Project files** (`projects/<project>.md` + `projects/<project>/`): where it runs and what it uses in the main file, design and progress in Design, an append-only project log for what happened when. Projects are indexed by their frontmatter, no index file to maintain.
 - **Skills** (`skills/`): `daily-log` and `project-docs` teach the agent the formats; `bin/sync_skills.py` installs them as project skills. Add your own skills next to them.
+- **Follow-up for blocked tasks** (`skills/follow-up`): when a task goes blocked, the agent checks whether the condition can be watched and offers to watch it. A background loop runs cheap watcher scripts (web pages and GitHub PRs included; add your own for Jira, Slack, email…) and only starts a cheaper model when a condition is met, to move the task back to in progress or to Review.
+- **Cost-aware planning**: when planning a project, each milestone records who does it: you, the main agent, or a sub-agent on a cheaper model (Haiku / Sonnet) for well-scoped mechanical work.
 - **Scripts** (`bin/`, Python standard library only): list unfinished tasks, summarize a day, list projects, a live task board, and `lint_vault.py`, which checks frontmatter, links, headings and task IDs and runs as a pre-commit hook.
 - **Credentials stay out of the docs**: everything sensitive lives in a gitignored `asset/config.yaml`; docs only say where a credential is (`→ config.yaml: <key>`).
 - **English and Chinese**: every rule file comes in both languages; the scripts understand headings in either.
@@ -64,7 +66,7 @@ python3 bin/board.py --host 0.0.0.0 --port 9000   # reachable from other machine
 - **Graph**: each project is a card; its unfinished tasks hang next to it, coloured by status (in progress, Review, blocked); tasks with no project gather under "No project". Skills sit inside the central Claude circle and are linked to the tasks and projects that mention them.
 - **Filters**: the buttons on top (keys `0`–`7`) bring one group to the front, e.g. everything waiting for your Review. Esc restores.
 - **Click** a task for its notes, detail doc and related project log entries; click a project for its summary, open tasks and recent log.
-- **Panels** below: unfinished tasks, load per project, follow-ups (only if you run a follow-up service) and the event stream from your daily logs.
+- **Panels** below: unfinished tasks, load per project, follow-up items (from `skills/follow-up`) and the event stream from your daily logs.
 - **The Claude core** shows today's tokens and, unless `--quota-interval 0`, your remaining 5-hour / weekly quota; it reads token counts from `~/.claude/projects` locally and never reads conversation content.
 - It watches the files and updates within a second, so keep it open in a browser tab while you work with the agent. Details in [bin/README.md](bin/README.md).
 
@@ -105,7 +107,7 @@ Then:
 ## Status and limitations
 
 - Command-line output and code comments of the scripts are in Chinese for now; the task board, docs, rules and skills are in English.
-- The board's follow-up panel expects an optional background service that isn't part of this repo; without it the panel stays empty.
+- The follow-up loop needs Claude Code installed and logged in on the machine that runs it (it starts `claude -p`), and watchers for the systems you want to watch.
 
 ## License
 

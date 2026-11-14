@@ -115,6 +115,16 @@ A task line may end with one type tag `#type/<type>` saying what kind of task it
 
 You may switch freely between not started, in progress, Review and blocked; tell the user in your reply when you do. When the blocker is gone, set it back to `[/]` and delete the "Blocked on" line.
 
+### When a task goes blocked
+
+When a task becomes `[!]` because it waits on someone or an external condition (a reply, a ticket status change, someone else's release), do this instead of polling in the session:
+
+1. Make the "Blocked on" line say exactly what it waits for and from whom.
+2. Check whether [follow-up](../follow-up/SKILL.md) can watch that condition: its "What can be watched" section lists what can be checked automatically right now (which external systems are connected, which watchers exist).
+3. **It can**: ask the user in your reply whether to add a follow-up item, spelling out what would be watched, what happens when it's met (usually: the task back to `[/]` or to `[?]`, plus a line under it) and when to stop waiting. Add it only if the user agrees, as described in follow-up.
+4. **It can't** (that system isn't connected, no credentials, the condition can't be checked automatically): say so in one sentence with the reason, and what it would take (a watcher for that system, a credential).
+5. When the blocker is gone, or the task is done or cancelled, remove its follow-up item.
+
 When the AI works a task, statuses go like this, without asking first:
 
 1. **Starting**: set the task to `[/]` in progress, then do the work.

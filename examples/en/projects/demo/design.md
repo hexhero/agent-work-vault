@@ -25,8 +25,9 @@ project: "[[demo]]"
 
 Phase 2 milestones:
 
-| Milestone | Status |
-| --- | --- |
-| 1. Agree the CSV columns with finance | Done |
-| 2. Implement `format=csv` and tests | In progress |
-| 3. Release to production | Not started |
+| Milestone | Who | Status |
+| --- | --- | --- |
+| 1. Agree the CSV columns with finance | User | Done |
+| 2. Implement `format=csv` | AI | In progress |
+| 3. Add test cases for every column | AI sub-agent (sonnet) | Not started |
+| 4. Release to production | User | Not started |

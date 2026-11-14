@@ -182,6 +182,8 @@ def follow_cond(e: dict) -> str:
         if t.get("keywords"):
             parts.append("containing " + ", ".join(f'"{k}"' for k in t["keywords"]))
         return ", ".join(parts)
+    if e.get("source") == "command":
+        return e.get("check") or ""
     if e.get("source") == "mail":
         m = e.get("mail") or {}
         return f"mailbox {m.get('mailbox', '')} readable" + (f", search finds {', '.join(m['search'])}" if m.get("search") else "")

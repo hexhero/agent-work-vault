@@ -53,10 +53,21 @@ Only tasks that change files or take several steps are recorded in the day's `ta
 - **Do the work first, no need to ask**. When done, ask at the end of your reply whether to record it as a task; **only add it if the user says so**.
 - **In progress when starting, Review when a human needs to look**: when you start on a task, change it to `[/]` in progress first; when it needs my decision, or is done, change it to `[?]` Review yourself and write down what I need to look at.
 - **`[x]` needs the user's consent**: when done, ask whether it can be marked done and stay in Review until I agree. Other statuses you may change yourself; tell the user when you do.
+- **When a task goes blocked, offer to watch it**: when a task becomes `[!]` (waiting on someone or an external condition), check whether [follow-up](skills/follow-up/SKILL.md) can watch that condition automatically; if it can, ask the user in your reply whether to add a follow-up item, and add it only if they agree; if it can't, say why and what would be needed. See "When a task goes blocked" in daily-log.
 - **Query unfinished tasks with [bin/unfinished_tasks.py](bin/README.md)**, not by reading logs by hand or grepping.
 - **Ask the user before creating a `task/details/` doc** (except when a task's sub-lines exceed 10 and are converted directly, or one created by background automation). Both project and non-project tasks can have one.
 - **Project tasks stay thin on the task side**: a task linked to a project keeps a single entry in the daily log (status, title, project, ticket number), with links to material needed for the task hanging below it; progress, history, conclusions and events go on the project side and are not repeated in the daily log; if the task's own process needs a long write-up, create a `task/details/` doc. For "what did I do today", [bin/day_summary.py](bin/README.md) combines both sides.
 - **Record events automatically, without asking**: every action that changes state gets one line; pure queries don't. Changes to the project itself (deploys, releases, restarts, config changes, decisions made on the project) go in the project log `projects/<project>/log.md`; everything else (changing tickets, sending messages, changing this repo's rules and skills, storing or reading credentials) goes under `## Events` in the daily log (`- HH:MM what was done`). See daily-log for the format.
+
+## Sub-agents and cheaper models
+
+When planning a project or breaking work into tasks, decide item by item whether a sub-agent on a cheaper model can do it, to save the main session's context and cost:
+
+- **Good to hand off**: well-scoped work you can just follow and easily verify, such as bulk format or text edits, translation, checking a list of files, running checks and summarizing the results, adding tests from an existing spec, tidying data. Start a sub-agent with the Agent tool and pick a cheaper `model`: `haiku` for purely mechanical work, `sonnet` when it needs some judgement.
+- **Keep in the main session**: design and trade-offs, anything the user must decide, outward actions (sending messages, changing tickets, deploying), anything touching credentials, changes that are hard to roll back.
+- **Brief it fully**: a sub-agent only sees what you give it. State the goal, which files to read, what to change, what not to touch, how to verify, and what to hand back. Independent pieces can run as several sub-agents at once.
+- **Verify what comes back**: the main session reviews the result and runs lint or tests before calling it done; task status, logs and commits stay with the main session.
+- When the plan goes into a Design milestone table, fill in its "Who" column (see "Phases and progress" in [project-docs](skills/project-docs/SKILL.md)) and split the work that way when it starts.
 
 ## Temporary files
 

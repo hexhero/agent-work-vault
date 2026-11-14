@@ -13,6 +13,8 @@
 - **每日日志**（`task/YYYY-MM-DD.md`）：跨项目的待办清单，带状态（未开始 / 进行中 / Review / Block / 完成 / 取消）、稳定的任务编号（`T-12`）、报告人标签，另有日志和事件流。agent 需要你决定时把任务推到 Review，没有你同意不会标记完成。
 - **项目文件**（`projects/<项目>.md` 加 `projects/<项目>/`）：主文件写在哪、用到什么；Design 写设计和进度；只追加的项目日志记什么时候发生了什么。项目靠 frontmatter 索引，不用维护索引文件。
 - **Skill**（`skills/`）：`daily-log`、`project-docs` 教 agent 这些格式；`bin/sync_skills.py` 把它们装成项目 skill。你自己的 skill 放在旁边就行。
+- **卡住的任务自动跟进**（`skills/follow-up`）：任务改成 Block 时，agent 会判断等的条件能不能盯，问你要不要盯。后台循环跑便宜的 watcher 脚本（自带网页和 GitHub PR 两个，Jira、Slack、邮件等自己加），条件满足了才启动便宜模型，把任务改回进行中或推到 Review。
+- **规划时考虑成本**：规划项目时每个里程碑写明谁做：你、主 agent，还是用便宜模型（Haiku / Sonnet）的子 agent 做范围清楚的机械活。
 - **脚本**（`bin/`，只用 Python 标准库）：列未完成任务、汇总某一天、列项目、实时任务看板，以及 `lint_vault.py`（查 frontmatter、链接、标题和任务编号，作为 pre-commit 钩子运行）。
 - **凭据不进文档**：敏感信息都在 gitignore 掉的 `asset/config.yaml` 里，文档里只写存在哪（`→ config.yaml: <键>`）。
 - **中英文**：规则文件都有中英两版，脚本两种语言的标题都认。
@@ -64,7 +66,7 @@ python3 bin/board.py --host 0.0.0.0 --port 9000   # 让别的机器也能打开
 - **关系图**：每个项目是一张卡片，未完成的任务挂在旁边，按状态着色（进行中、Review、Block）；没有项目的任务归到「No project」。skill 在中间的 Claude 圆里，连到提到它的任务和项目。
 - **筛选**：上方的按钮（ALL / IN PROGRESS / REVIEW 等，键盘 `0`～`7`）把一类调到前景，比如所有等你 Review 的任务；按 Esc 还原。
 - **点击**任务看补充说明、详情文档和相关的项目日志；点项目看简介、未完成任务和最近的日志。
-- **下方面板**：未完成任务、各项目任务量、跟进（只有跑了跟进服务才有内容）、每日日志里的事件流。
+- **下方面板**：未完成任务、各项目任务量、跟进项（来自 `skills/follow-up`）、每日日志里的事件流。
 - **中间的 Claude 核心**显示今天的 token，没加 `--quota-interval 0` 时还显示近 5 小时 / 本周的余量；token 数从本机 `~/.claude/projects` 读，不读对话内容。
 - 文件一改一秒内就刷新，和 agent 一起干活时开在浏览器标签页里就行。细节见 [bin/README.md](bin/README.md)。
 
@@ -105,7 +107,7 @@ python3 bin/setup.py --lang zh-CN --timezone Asia/Shanghai --examples
 ## 现状和限制
 
 - 脚本的命令行输出和代码注释目前是中文；任务看板的界面是英文；文档、规则和 skill 中英文都齐。
-- 看板的「跟进」面板需要一个可选的后台服务，不在本仓库里；没有它面板就是空的。
+- 跟进循环要在装好并登录了 Claude Code 的机器上跑（它会启动 `claude -p`），要盯的系统得有对应的 watcher。
 
 ## 许可证
 
