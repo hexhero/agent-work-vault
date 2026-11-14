@@ -21,7 +21,10 @@
 
 ## 设计：项目和任务是两套对齐的模型
 
-多数笔记系统把「我在做什么」和「我知道什么」写在同一页里，结果两样都会烂掉。这里把它们分成两类实体，各有固定的结构，再用稳定的标识和单向的关系对齐起来，像两个小本体之间做映射：
+多数笔记系统把「我在做什么」和「我知道什么」写在同一页里，结果两样都会烂掉。这里把它们分成两类实体，各有固定的结构，再用稳定的标识和单向的关系对齐起来，像两个小本体之间做映射。
+
+**「项目」和「任务」都是广义的。** *项目*是任何长期存在、要积累知识、会反复回来看的对象：可以是一个软件服务，也可以是一个客户、一条产品线、一套反复跑的流程（招聘、月结、值班）、一块负责的职责、一个研究方向，甚至一次搬家。*任务*是任何有终点的一件事：修一个 bug、回一个请求、准备一次会议、做一个决定、跑一趟腿。判断标准不是「这在项目管理意义上算不算项目」，而是「我会不会反复回到这个对象、需要知道它在哪、发生过什么」（项目），还是「有一件事要做完」（任务）。项目文件的固定小节都可以不写，所以客户、流程和服务器一样放得进来。
+
 
 | | **任务（Task）** | **项目（Project）** |
 | --- | --- | --- |
@@ -74,8 +77,23 @@ python3 bin/board.py --host 0.0.0.0 --port 9000   # 让别的机器也能打开
 
 需要：Python 3.10+、Git、[Claude Code](https://claude.com/claude-code)；Obsidian 可选，建议装。
 
+**有 GitHub 账号的，建议放进你自己的私有仓库。** 知识库里会记你的工作，不要公开。GitHub 不允许把公开仓库的 fork 改成私有，所以这样做：
+
+- 在本仓库页面点 **Use this template → Create a new repository**，选 **Private**，再克隆你的新仓库；或者
+- 先自己建一个空的私有仓库，再镜像推过去：
+
+  ```bash
+  git clone --bare https://github.com/hexhero/agent-work-vault.git
+  git -C agent-work-vault.git push --mirror https://github.com/<你>/<你的私有仓库>.git
+  rm -rf agent-work-vault.git
+  ```
+
+想跟上本仓库后续的改进：在你的副本里把本仓库加成 `upstream`，隔段时间合并一次（`git remote add upstream https://github.com/hexhero/agent-work-vault.git`，然后 `git fetch upstream && git merge upstream/main`；用 template 建的副本第一次合并要加 `--allow-unrelated-histories`）。
+
+然后初始化：
+
 ```bash
-git clone https://github.com/hexhero/agent-work-vault.git my-vault
+git clone https://github.com/<你>/<你的私有仓库>.git my-vault   # 只想先试试，也可以直接克隆本仓库
 cd my-vault
 python3 bin/setup.py --lang zh-CN --timezone Asia/Shanghai --examples
 ```

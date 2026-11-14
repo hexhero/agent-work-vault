@@ -9,6 +9,10 @@ The red lines (when to read project files, whether changes need asking first) ar
 
 For a sample, see the demo project in `examples/` (main file, Design with progress table, project log); `bin/setup.py --examples` installs it into `projects/`.
 
+## What counts as a project
+
+Not just software projects: anything long-lived you keep knowledge about and return to counts, such as a service, a customer, a product line, a recurring process (hiring, month-end close, on-call), an area of responsibility, a research area. A single piece of work with an end is a task and goes in the daily log. All fixed sections of the main file are optional; a customer or a process that has no "Location" or "Resources" simply leaves them out, with `repo` and `hosts` empty.
+
 ## A project's four kinds of content
 
 | Content | Answers | Where | How |

@@ -21,7 +21,10 @@ It grew out of a real working setup used every day by a backend engineer, with e
 
 ## The design: projects and tasks as two aligned models
 
-Most note systems mix "what I'm doing" and "what I know" in the same pages, and both rot. This vault keeps them as two separate kinds of entity with a fixed schema each, and aligns them through stable identifiers and one-way relations, much like two small ontologies mapped onto each other:
+Most note systems mix "what I'm doing" and "what I know" in the same pages, and both rot. This vault keeps them as two separate kinds of entity with a fixed schema each, and aligns them through stable identifiers and one-way relations, much like two small ontologies mapped onto each other.
+
+**"Project" and "task" are meant broadly.** A *project* is anything long-lived you keep knowledge about and return to: a software service, but just as well a customer account, a product line, a recurring process (hiring, month-end close, on-call), an area of responsibility, a body of research, even a house move. A *task* is any single piece of work with an end: fixing a bug, answering a request, preparing a meeting, making a decision, an errand. The test is not "is this a project in the project-management sense" but "will I come back to this subject and need to know where things are and what happened" (project) versus "is there something to get done" (task). The fixed sections of a project file are all optional, so a customer or a process fits as well as a server.
+
 
 | | **Task** | **Project** |
 | --- | --- | --- |
@@ -74,8 +77,23 @@ python3 bin/board.py --host 0.0.0.0 --port 9000   # reachable from other machine
 
 Requirements: Python 3.10+, Git, [Claude Code](https://claude.com/claude-code); Obsidian is optional but recommended.
 
+**Have a GitHub account? Keep your vault in a private repository of your own.** Your vault will hold your work, so don't keep it public. GitHub doesn't let you make a fork of a public repository private, so instead:
+
+- On this repository's page click **Use this template → Create a new repository**, choose **Private**, then clone your new repository; or
+- mirror it into an empty private repository you created:
+
+  ```bash
+  git clone --bare https://github.com/hexhero/agent-work-vault.git
+  git -C agent-work-vault.git push --mirror https://github.com/<you>/<your-private-vault>.git
+  rm -rf agent-work-vault.git
+  ```
+
+To pick up later improvements, add this repository as `upstream` in your copy and merge from it now and then (`git remote add upstream https://github.com/hexhero/agent-work-vault.git`, then `git fetch upstream && git merge upstream/main`; a copy made from the template needs `--allow-unrelated-histories` the first time).
+
+Then set it up:
+
 ```bash
-git clone https://github.com/hexhero/agent-work-vault.git my-vault
+git clone https://github.com/<you>/<your-private-vault>.git my-vault   # or this repository, to just try it
 cd my-vault
 python3 bin/setup.py --lang en --timezone Europe/Berlin --examples   # or --lang zh-CN
 ```
