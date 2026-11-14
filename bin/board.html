@@ -356,7 +356,7 @@ aside::before{content:"";position:absolute;left:-1px;top:0;width:1px;height:120p
 <body>
 <header>
   <div class="mark"></div>
-  <div class="word">TASK SWARM<em>WORK-KNOWLEDGE</em></div>
+  <div class="word">TASK SWARM<em id="vaultName"></em></div>
   <div class="hk" id="hk"></div>
   <span class="sp"></span>
   <div class="themes" id="themes" title="配色">
@@ -1078,6 +1078,7 @@ function apply(state){
   const byKey = new Map(state.tasks.map(t => [tkey(t), t]));
   if (UI.prev) for (const [k, s] of now) if (UI.prev.get(k) !== s){ const t = byKey.get(k); changed.push({k, s, old:UI.prev.get(k), id:t.id, title:t.title, p:t.projects[0]}); }
   UI.prev = now; UI.state = state; render();
+  document.getElementById("vaultName").textContent = (state.vault || "").toUpperCase();
   if (changed.length && changed.length <= 8) spotlight(changed);
 }
 let heard = 0, lastState = '', lastUsage = '';

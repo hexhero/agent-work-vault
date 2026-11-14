@@ -4,6 +4,8 @@
 
 和 AI agent 一起用的工作知识库：一个 Git 仓库，同时是 [Obsidian](https://obsidian.md) vault 和 [Claude Code](https://claude.com/claude-code) 项目。你跟 agent 说话，它按 `CLAUDE.md` 和几个 skill 里写的规则，帮你维护每日任务日志、项目文件和笔记；几个小脚本和 lint 保证这些东西都能检查。
 
+![用示例数据跑起来的任务看板](docs/images/board.png)
+
 它来自一位后端工程师每天在用的真实工作环境，去掉了所有个人和公司的内容。
 
 ## 有什么
@@ -14,6 +16,57 @@
 - **脚本**（`bin/`，只用 Python 标准库）：列未完成任务、汇总某一天、列项目、实时任务看板，以及 `lint_vault.py`（查 frontmatter、链接、标题和任务编号，作为 pre-commit 钩子运行）。
 - **凭据不进文档**：敏感信息都在 gitignore 掉的 `asset/config.yaml` 里，文档里只写存在哪（`→ config.yaml: <键>`）。
 - **中英文**：规则文件都有中英两版，脚本两种语言的标题都认。
+
+## 设计：项目和任务是两套对齐的模型
+
+多数笔记系统把「我在做什么」和「我知道什么」写在同一页里，结果两样都会烂掉。这里把它们分成两类实体，各有固定的结构，再用稳定的标识和单向的关系对齐起来，像两个小本体之间做映射：
+
+| | **任务（Task）** | **项目（Project）** |
+| --- | --- | --- |
+| 回答 | 要做什么、做完没有 | 这个系统是什么、在哪、发生过什么 |
+| 生命周期 | 短：开、做、关 | 长：系统在它就在 |
+| 标识 | `T-N`（全局递增，不复用） | 文件名，如 `demo` |
+| 放在哪 | `task/YYYY-MM-DD.md` 里的一行（可另有 `task/details/` 文档） | `projects/<名字>.md` 加 `projects/<名字>/` |
+| 结构 | 状态复选框、起止时间、编号、主题、工单号、`#reporter/`、`#type/` | frontmatter（`name`、`description`、`aliases`、`repo`、`hosts`）加固定小节 |
+| 怎么变 | 状态流转（未开始 → 进行中 → Review / Block → 完成） | 现状原地改写；历史只追加 |
+
+```mermaid
+erDiagram
+    TASK }o--|| PROJECT : "项目行（属于）"
+    TASK ||--o| DETAIL_DOC : "详情链接"
+    DETAIL_DOC }o--o| PROJECT : "frontmatter project"
+    PROJECT ||--|| MAIN_FILE : "位置 / 资源 / 坑"
+    PROJECT ||--o| DESIGN : "现在的设计 + 进度"
+    PROJECT ||--|| PROJECT_LOG : "只追加的历史"
+    PROJECT_LOG }o--o{ TASK : "引用为出处"
+    DAILY_LOG ||--o{ TASK : "包含"
+    DAILY_LOG ||--o{ EVENT : "非项目事件"
+```
+
+对齐的规则：
+
+- **每条事实只有一个归宿**，按它是什么性质来定：干活时要照做的 → 项目主文件；系统「现在」什么样、计划 → Design；「什么时候」发生了什么 → 项目日志；做没做完 → 任务那一行。不写两遍。
+- **任务指向项目，项目不指回任务。** 任务用「项目：」行写明属于哪个项目；项目文件不列任务（只有项目日志可以把任务当出处引用）。任务都关掉很久以后，项目文件读起来仍然是完整的知识。
+- **项目型任务很薄。** 进展和结论记在项目那边，任务那一行只管状态；任务做完时，长期有用的东西已经落进项目里了。
+- **两条事件流，按对象分。** 系统本身的变化（发版、改配置、定下来的事）进项目日志；沟通和其余的进每日日志的 `## 事件`。「今天干了什么」用 `bin/day_summary.py` 把两边合起来看。
+- **结构靠检查保证，不靠自觉。** `lint_vault.py` 每次提交都查 frontmatter 类型、固定小节、标题顺序、任务编号唯一、链接方向；`projects.py`、`unfinished_tasks.py` 分别查两套模型，看板把它们的关联画出来。
+
+## 任务看板
+
+`bin/board.py` 起一个只读的实时页面，把项目、未完成任务、skill 和事件画成一张图（见上面的截图）。
+
+```bash
+python3 bin/board.py                     # 打开 http://127.0.0.1:8765
+python3 bin/board.py --quota-interval 0  # 不查 Claude 订阅余量
+python3 bin/board.py --host 0.0.0.0 --port 9000   # 让别的机器也能打开
+```
+
+- **关系图**：每个项目是一张卡片，未完成的任务挂在旁边，按状态着色（进行中、Review、Block）；没有项目的任务归到「非项目」。skill 在中间的 Claude 圆里，连到提到它的任务和项目。
+- **筛选**：上方的按钮（键盘 `0`～`7`）把一类调到前景，比如所有等你 Review 的任务；按 Esc 还原。
+- **点击**任务看补充说明、详情文档和相关的项目日志；点项目看简介、未完成任务和最近的日志。
+- **下方面板**：未完成任务、各项目任务量、跟进（只有跑了跟进服务才有内容）、每日日志里的事件流。
+- **中间的 Claude 核心**显示今天的 token，没加 `--quota-interval 0` 时还显示近 5 小时 / 本周的余量；token 数从本机 `~/.claude/projects` 读，不读对话内容。
+- 文件一改一秒内就刷新，和 agent 一起干活时开在浏览器标签页里就行。细节见 [bin/README.md](bin/README.md)。
 
 ## 上手
 
@@ -51,7 +104,7 @@ python3 bin/setup.py --lang zh-CN --timezone Asia/Shanghai --examples
 
 ## 现状和限制
 
-- 脚本的输出、注释和任务看板的界面目前是中文；文档、规则和 skill 中英文都齐。
+- 脚本的输出、注释和任务看板的界面文字目前是中文（截图里能看到）；文档、规则和 skill 中英文都齐。
 - 看板的「跟进」面板需要一个可选的后台服务，不在本仓库里；没有它面板就是空的。
 
 ## 许可证

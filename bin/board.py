@@ -230,7 +230,7 @@ def build_state() -> dict:
                      "description": "没有链到任何项目的任务：本仓库的规则和 skill、调研、杂事。"})
     skills = load_skills({p["id"] for p in projects})
     now = datetime.now(timezone.utc) + TZ_OFFSET
-    return {"generated": now.strftime("%Y-%m-%d %H:%M:%S"), "tz_offset_min": int(TZ_OFFSET.total_seconds() // 60), "projects": projects,
+    return {"generated": now.strftime("%Y-%m-%d %H:%M:%S"), "tz_offset_min": int(TZ_OFFSET.total_seconds() // 60), "vault": ROOT.name, "projects": projects,
             "tasks": load_tasks([s["id"] for s in skills]), "skills": skills, "events": load_events(),
             "followup": load_followup()}
 
