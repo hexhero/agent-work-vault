@@ -1,0 +1,2 @@
+# Markdown 固定使用 LF 行尾,避免 Windows autocrlf 产生的"幽灵修改"
+*.md text eol=lf

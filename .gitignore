@@ -1,0 +1,14 @@
+# Credentials: never commit
+asset/config.yaml
+skills/*/config.json
+
+task/temp/
+.obsidian/workspace.json
+.obsidian/plugins/task-board/tasks.json
+.obsidian/plugins/task-board/task-board-logs.log
+# Obsidian plugin code comes from the plugin store; only manifest.json and data.json (settings) are kept
+/.obsidian/plugins/*/main.js
+/.obsidian/plugins/*/styles.css
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+__pycache__/

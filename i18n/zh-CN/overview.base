@@ -1,0 +1,45 @@
+filters:
+  and:
+    - file.ext == "md"
+views:
+  - type: table
+    name: 项目
+    filters:
+      and:
+        - type == "project"
+    order:
+      - file.name
+      - description
+      - aliases
+      - repo
+      - hosts
+      - file.backlinks
+  - type: table
+    name: 任务详情
+    filters:
+      and:
+        - type == "task-doc"
+    order:
+      - file.name
+      - project
+      - log
+  - type: table
+    name: 调研
+    filters:
+      and:
+        - type == "research"
+    order:
+      - file.name
+      - topic
+      - aliases
+      - updated
+  - type: table
+    name: 指南
+    filters:
+      and:
+        - type == "guide"
+    order:
+      - file.name
+      - topic
+      - aliases
+      - updated

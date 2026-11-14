@@ -1,0 +1,14 @@
+# Template for asset/config.yaml (no secrets here). Copy it to config.yaml, fill it in, chmod 600.
+# asset/config.yaml 的结构模板（不含任何密码）。复制为 config.yaml 后填写，权限改成 600。
+# Project files and the service list refer to entries as "→ config.yaml: <key>", e.g. "→ config.yaml: github.token".
+ssh:
+  app01:
+    user: deploy
+    password: ''
+github:
+  user: ''
+  token: ''
+example_db:
+  host: 192.0.2.20
+  user: readonly
+  password: ''

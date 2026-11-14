@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# 提交前按 CLAUDE.md 的约定检查文档，有错误就拒绝提交。启用：git config core.hooksPath .githooks
+exec python3 "$(git rev-parse --show-toplevel)/bin/lint_vault.py" -q
