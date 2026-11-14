@@ -61,7 +61,7 @@ python3 bin/board.py --quota-interval 0  # don't poll your Claude subscription q
 python3 bin/board.py --host 0.0.0.0 --port 9000   # reachable from other machines
 ```
 
-- **Graph**: each project is a card; its unfinished tasks hang next to it, coloured by status (in progress, Review, blocked); tasks with no project gather under "非项目" (no project). Skills sit inside the central Claude circle and are linked to the tasks and projects that mention them.
+- **Graph**: each project is a card; its unfinished tasks hang next to it, coloured by status (in progress, Review, blocked); tasks with no project gather under "No project". Skills sit inside the central Claude circle and are linked to the tasks and projects that mention them.
 - **Filters**: the buttons on top (keys `0`–`7`) bring one group to the front, e.g. everything waiting for your Review. Esc restores.
 - **Click** a task for its notes, detail doc and related project log entries; click a project for its summary, open tasks and recent log.
 - **Panels** below: unfinished tasks, load per project, follow-ups (only if you run a follow-up service) and the event stream from your daily logs.
@@ -104,7 +104,7 @@ Then:
 
 ## Status and limitations
 
-- Script output, comments and the task board UI labels are in Chinese for now (the screenshot shows them); the docs, rules and skills are fully in English.
+- Command-line output and code comments of the scripts are in Chinese for now; the task board, docs, rules and skills are in English.
 - The board's follow-up panel expects an optional background service that isn't part of this repo; without it the panel stays empty.
 
 ## License

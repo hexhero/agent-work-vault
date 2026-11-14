@@ -2,7 +2,7 @@
 
 Tool scripts. Run them from the repository root; they only need the Python 3 standard library.
 
-Script output and comments are in Chinese for now; the commands and options below are the same in either language.
+Script output and comments are in Chinese for now (the task board page is in English); the commands and options below are the same in either language.
 
 ## setup.py
 
@@ -103,18 +103,18 @@ bin/day_summary.py -p demo        # one project only
 
 ## board.py
 
-Task board: renders `projects/`, `task/` and `skills/` as a live-updating relationship graph; read-only, changes no files. The page is `bin/board.html` (its UI is in Chinese for now).
+Task board: renders `projects/`, `task/` and `skills/` as a live-updating relationship graph; read-only, changes no files. The page is `bin/board.html`.
 
 - The top is the graph: projects are file cards, unfinished tasks hang next to their project, skills are labels inside the big central circle, done / cancelled tasks are small dots around their project. Edges are task → project, task → skill (the skill name appears in the task title or notes), skill → project (projects linked from SKILL.md), project → core.
 - In-progress, Review and blocked tasks are cards in their status colour; their edges to projects, skills and the core and the endpoints are drawn in the status colour with moving light dots; everything else is background.
 - The core circle in the middle is Claude: icon and label in the centre, below them the remaining subscription quota for the last 5 hours and the week, today's tokens and the number of running sessions. Two rings of sectors inside show the quota (inner: 5 hours, outer: week, clockwise from 12 o'clock; bigger means more left; red below 20%); around the ring is a bar chart of output tokens per hour over the last 24 hours; clicking the core opens details (quota and reset times, token breakdown, last 7 days, per model).
 - Where the quota comes from: every 15 minutes `board.py` sends the shortest possible headless request with haiku (`claude -p`, no saved session, no tools or MCP) and reads the used share and reset times from the returned rate-limit info, about ten thousand haiku tokens each time; `--quota-interval 0` turns it off, after which the core shows tokens only. Token counts come from the local session records in `~/.claude/projects`, reading only numbers and model names, never conversation content, scanned incrementally every 5 seconds. No costs.
-- A row of buttons above the graph (all / in progress / Review / blocked / not started / projects / skills / done, keys `0`–`7`): clicking one brings that group to the foreground, enlarging the cards around the core with their full content ("blocked on", "pending", project, reporter), highlights related projects and skills and dims the rest; click again or press Esc to restore.
+- A row of buttons above the graph (ALL / IN PROGRESS / REVIEW / BLOCKED / TO DO / PROJECTS / SKILLS / DONE, keys `0`–`7`): clicking one brings that group to the foreground, enlarging the cards around the core with their full content ("blocked on", "pending", project, reporter), highlights related projects and skills and dims the rest; click again or press Esc to restore.
 - When a new task arrives or a task's status changes, those tasks come to the foreground for 20 seconds (same effect), with a list of changes at the top (old status → new status); click anywhere or press Esc to restore early. Not triggered for more than 8 changes at once (e.g. a bulk log edit).
 - Click a task to see its content: reporter, notes, `task/details/` doc, project log entries mentioning the same ticket number. Click a project for its summary, unfinished tasks, related skills, project log (last 3 days by default) and done tasks. Click a skill for its description, linked projects and tasks mentioning it. Hovering a node or a row in the lists below highlights its edges and neighbours.
 - Four panels below: unfinished tasks, task counts per project (unfinished / all), follow-ups, and the event stream (entries under "## Events" in daily logs, newest first, up to 300; task IDs in events are clickable; a new event makes its task node ripple).
 - The follow-up panel shows items from an optional background follow-up service if you run one (`task/follow-up.json` and `~/.local/state/follow-up/`); without one it stays empty.
-- "Collapse panels" at the bottom of the graph (key `F`) folds the panels away so the graph fills the window; click again to expand; the state is kept in the browser.
+- "Hide panels" at the bottom of the graph (key `F`) folds the panels away so the graph fills the window; click again to expand; the state is kept in the browser.
 - Teal by default; four dots at the top right switch the palette (teal / orange / ice blue / lime), kept in the browser. With "reduce motion" on, nodes don't float and no light dots run.
 - Data reuses the parsers of `projects.py` and `unfinished_tasks.py`; skills are read from each `SKILL.md`'s frontmatter; files are checked for changes every second and pushed to the page over SSE.
 - Listens on localhost only by default; `/api/doc` only serves docs under `task/details/`.

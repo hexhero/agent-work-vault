@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#070a14">
-<title>TASK SWARM · 任务看板</title>
+<title>TASK SWARM · Task board</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070a14'/%3E%3Cg stroke='%238f9df0' stroke-width='2.5' opacity='.8'%3E%3Cpath d='M32 32 12 14M32 32 53 18M32 32 50 52M32 32 13 48'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%2314e6c2' stroke-width='3.5' stroke-dasharray='80 27' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='7.5' fill='%2314e6c2'/%3E%3Crect x='7' y='9' width='10' height='10' fill='%23ffb340'/%3E%3Crect x='48' y='13' width='10' height='10' fill='%2314e6c2'/%3E%3Crect x='45' y='47' width='10' height='10' fill='%23ff4658'/%3E%3Crect x='8' y='43' width='10' height='10' fill='%238f9df0'/%3E%3C/svg%3E">
 <style>
 :root{
@@ -359,23 +359,23 @@ aside::before{content:"";position:absolute;left:-1px;top:0;width:1px;height:120p
   <div class="word">TASK SWARM<em id="vaultName"></em></div>
   <div class="hk" id="hk"></div>
   <span class="sp"></span>
-  <div class="themes" id="themes" title="配色">
+  <div class="themes" id="themes" title="Palette">
     <i data-theme-pick="teal" style="--c:#14e6c2"></i><i data-theme-pick="ember" style="--c:#ff6b2c"></i><i data-theme-pick="ice" style="--c:#7cd4ff"></i><i data-theme-pick="lime" style="--c:#c8f542"></i>
   </div>
-  <div class="hstat"><span id="sync">等待数据</span><span class="clk" id="clock">--:--:--</span><span class="live off" id="live">OFFLINE</span></div>
+  <div class="hstat"><span id="sync">Waiting for data</span><span class="clk" id="clock">--:--:--</span><span class="live off" id="live">OFFLINE</span></div>
 </header>
 <section id="stage">
   <canvas id="cv"></canvas><div class="scan"></div>
   <div id="nodes"></div>
   <div id="filters"></div>
   <div id="alert"></div>
-  <div id="hint"></div><div id="gstat"></div><button id="fold" data-fold title="收起 / 展开下面的面板（F）"></button>
+  <div id="hint"></div><div id="gstat"></div><button id="fold" data-fold title="Collapse / expand the panels below (F)"></button>
 </section>
 <div class="dock">
-  <section class="panel"><div class="phd"><span class="lbl">Attention · <b>未完成的任务</b></span><span class="sp"></span><span class="lbl" id="qn"></span></div><div class="pbd" id="queue"><div class="none">LINKING…</div></div></section>
-  <section class="panel"><div class="phd"><span class="lbl">Project load · <b>项目任务量</b></span><span class="sp"></span><span class="lbl" id="ln"></span></div><div class="pbd" id="load"></div></section>
-  <section class="panel" id="fpanel"><div class="phd"><span class="lbl">Follow-up · <b>跟进</b></span><span class="sp"></span><span class="fsv" id="fsv"></span></div><div class="pbd" id="fus"></div><div class="fft" id="fft"></div></section>
-  <section class="panel" id="feed"><div class="phd"><span class="lbl">Event stream · <b>事件</b></span><span class="sp"></span><span class="lbl" id="evn"></span></div><div class="evs" id="evs"></div></section>
+  <section class="panel"><div class="phd"><span class="lbl">Attention · <b>Open tasks</b></span><span class="sp"></span><span class="lbl" id="qn"></span></div><div class="pbd" id="queue"><div class="none">LINKING…</div></div></section>
+  <section class="panel"><div class="phd"><span class="lbl">Project load · <b>Tasks per project</b></span><span class="sp"></span><span class="lbl" id="ln"></span></div><div class="pbd" id="load"></div></section>
+  <section class="panel" id="fpanel"><div class="phd"><span class="lbl">Follow-up · <b>Watched items</b></span><span class="sp"></span><span class="fsv" id="fsv"></span></div><div class="pbd" id="fus"></div><div class="fft" id="fft"></div></section>
+  <section class="panel" id="feed"><div class="phd"><span class="lbl">Event stream · <b>Events</b></span><span class="sp"></span><span class="lbl" id="evn"></span></div><div class="evs" id="evs"></div></section>
 </div>
 <div class="veil" id="veil"></div>
 <aside id="drawer"></aside>
@@ -383,7 +383,7 @@ aside::before{content:"";position:absolute;left:-1px;top:0;width:1px;height:120p
 <script>
 const NONE = '_none';
 const ORDER = {review:0, doing:1, blocked:2, other:3, todo:4, done:5, cancelled:6};
-const NAME = {doing:'进行中', review:'REVIEW', blocked:'BLOCK', todo:'未开始', other:'其他', done:'已完成', cancelled:'已取消'};
+const NAME = {doing:'IN PROGRESS', review:'REVIEW', blocked:'BLOCKED', todo:'TO DO', other:'OTHER', done:'DONE', cancelled:'CANCELLED'};
 const VAR = {doing:'acc', review:'review', blocked:'block', todo:'todo', other:'dim', done:'ok', cancelled:'faint'};
 const COLOR = Object.fromEntries(Object.entries(VAR).map(([k, v]) => [k, `var(--${v})`]));
 const ACTIVE = new Set(['doing', 'review', 'blocked']);
@@ -399,10 +399,10 @@ const tzStr = () => { const m = tzMin(), a = Math.abs(m); return (m < 0 ? '-' : 
 const today = () => new Date(Date.now() + tzMin() * 6e4).toISOString().slice(0, 10);
 /* follow-up：截止时间是 vault 时区的 "YYYY-MM-DD HH:MM" */
 const bjMs = s => Date.parse(s.replace(' ', 'T') + ':00' + tzStr());
-const fuLeft = u => { if (!u) return ['不限期', false]; const h = (bjMs(u) - Date.now()) / 36e5;
-  return h <= 0 ? ['已到期', true] : h < 24 ? ['剩 ' + Math.max(1, Math.round(h)) + ' 小时', true] : ['剩 ' + Math.round(h / 24) + ' 天', false]; };
+const fuLeft = u => { if (!u) return ['no deadline', false]; const h = (bjMs(u) - Date.now()) / 36e5;
+  return h <= 0 ? ['expired', true] : h < 24 ? [Math.max(1, Math.round(h)) + 'h left', true] : [Math.round(h / 24) + 'd left', false]; };
 const fuOf = id => id ? ((UI.state?.followup?.items) || []).filter(f => f.task === id) : [];
-const age = d => { const n = Math.round((Date.parse(today()) - Date.parse(d)) / 864e5); return n <= 0 ? '今天' : n + ' 天前'; };
+const age = d => { const n = Math.round((Date.parse(today()) - Date.parse(d)) / 864e5); return n <= 0 ? 'today' : n + 'd ago'; };
 const tok = n => n >= 1e9 ? (n / 1e9).toFixed(2) + 'B' : n >= 1e6 ? (n / 1e6).toFixed(n >= 1e8 ? 0 : 1) + 'M' : n >= 1e4 ? (n / 1e3).toFixed(n >= 1e5 ? 0 : 1) + 'K' : n.toLocaleString('en-US');
 const sum = t => t.in + t.out + t.cw + t.cr;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -474,7 +474,7 @@ function model(){
     return p;
   });
 }
-const pname = p => p.id === NONE ? '非项目' : p.name;
+const pname = p => p.id === NONE ? 'No project' : p.name;
 
 /* ================= 关系图 ================= */
 const G = {nodes:new Map(), edges:[], emap:new Map(), dots:[], focus:null, spot:new Map(), spotT:0, hover:null, W:0, H:0, cx:0, cy:0, R:0, hole:0, ko:0, top:56, m:false, rings:[], amb:[], booted:false, pal:{}};
@@ -599,8 +599,8 @@ function build(){
       fs.forEach((f, j) => {
         let vx = ax - pn.ax, vy = ay - pn.ay; const vl = Math.hypot(vx, vy) || 1;
         const a0 = Math.atan2(vy / vl, vx / vl) + (j - (fs.length - 1) / 2) * .7 + (m ? 0 : .35), [lt, late] = fuLeft(f.until);
-        const fn = node('f:' + f.id, 'fw', {...f, description:`${f.id} · ${f.title}\n盯：${f.cond}\n${f.until ? '截止 ' + f.until + '（' + lt + '）' : '不限期'}${f.last_check ? '\n上次检查 ' + f.last_check : ''}`},
-          {tn:n, ux:Math.cos(a0), uy:Math.sin(a0), c:f.paused ? 'faint' : late ? 'block' : 'acc', lt:f.paused ? '暂停' : lt.replace('剩 ', '').replace(' ', ''), late, paused:!!f.paused});
+        const fn = node('f:' + f.id, 'fw', {...f, description:`${f.id} · ${f.title}\nWatching: ${f.cond}\n${f.until ? 'Until ' + f.until + ' (' + lt + ')' : 'No deadline'}${f.last_check ? '\nLast checked ' + f.last_check : ''}`},
+          {tn:n, ux:Math.cos(a0), uy:Math.sin(a0), c:f.paused ? 'faint' : late ? 'block' : 'acc', lt:f.paused ? 'paused' : lt.replace(' left', ''), late, paused:!!f.paused});
         fn.el.dataset.open = 't:' + tkey(t);
         const [fw, fh] = size(fn), r = Math.min(w / 2 / (Math.abs(fn.ux) || 1e-6), h / 2 / (Math.abs(fn.uy) || 1e-6)) + fw / 2 + (m ? 26 : 62);
         const fx = ax + fn.ux * r, fy = ay + fn.uy * r;
@@ -683,14 +683,14 @@ function formation(F){
 function nodeHTML(n){
   if (n.kind === 'pj'){
     const p = n.data, pips = p.open.map(t => `<i class="${t.status === 'todo' ? 'z' : ''}" style="--c:${COLOR[t.status]}"></i>`).join('');
-    return `<b class="nm">${esc(pname(p))}</b><div class="pp"><span class="pips">${pips}</span><span class="ct">${p.open.length ? p.open.length + ' 未完成 · ' : ''}${p.closed.length}✓</span></div>`;
+    return `<b class="nm">${esc(pname(p))}</b><div class="pp"><span class="pips">${pips}</span><span class="ct">${p.open.length ? p.open.length + ' open · ' : ''}${p.closed.length}✓</span></div>`;
   }
   if (n.kind === 'tk'){
-    const t = n.data, why = (t.detail.match(/(?:卡在|待确认)[：:]\s*(.+)/) || [])[1], ref = t.refs.find(r => /^[A-Z]/.test(r));
-    const pj = t.projects.map(id => id === NONE ? '非项目' : id).join(' · ');
+    const t = n.data, why = (t.detail.match(/(?:卡在|待确认|Blocked on|Pending)[：:]\s*(.+)/) || [])[1], ref = t.refs.find(r => /^[A-Z]/.test(r));
+    const pj = t.projects.map(id => id === NONE ? 'No project' : id).join(' · ');
     const fu = fuOf(t.id), f0 = fu[0], [lt, late] = f0 ? fuLeft(f0.until) : ['', false];
     return `<div class="hd"><i></i><b>${esc(t.id || '—')}</b><span>${NAME[t.status] || esc(t.label)}</span>${ref ? `<em>${esc(ref)}</em>` : ''}</div>
-      <div class="ti">${esc(plain(t.title))}</div>${why ? `<div class="why">${esc(plain(why))}</div>` : ''}${f0 ? `<div class="fu${late ? ' late' : ''}">跟进 ${esc(f0.id)}：${esc(f0.cond)} · ${lt}</div>` : ''}<div class="ft">${esc(pj)} · ${age(t.date)}${t.reporter ? ' · ' + esc(t.reporter) : ''}</div>`;
+      <div class="ti">${esc(plain(t.title))}</div>${why ? `<div class="why">${esc(plain(why))}</div>` : ''}${f0 ? `<div class="fu${late ? ' late' : ''}">Watch ${esc(f0.id)}: ${esc(f0.cond)} · ${lt}</div>` : ''}<div class="ft">${esc(pj)} · ${age(t.date)}${t.reporter ? ' · ' + esc(t.reporter) : ''}</div>`;
   }
   if (n.kind === 'fw') return `<b>${esc(n.data.id)}</b><span>${esc(n.lt)}</span>`;
   if (n.kind === 'sk') return `<span class="s">${esc(n.short)}</span><span class="f">${esc(n.data.id)}<b>${n.data.uses}</b></span>`;
@@ -723,7 +723,7 @@ function paint(){
   }
   document.querySelectorAll('.fb').forEach(b => b.classList.toggle('on', !G.spot.size && !!G.focus && b.dataset.focus === G.focus));
   const lg = (c, t) => `<span style="--c:var(--${c})"><i></i>${t}</span>`;
-  $('hint').innerHTML = G.spot.size ? '<b>任务有变化，已自动调到前景 · 点任意处或按 Esc 还原</b>' : G.focus ? `<b>${esc(FOCUS.find(f => f[0] === G.focus)[1])} 已调到前景 · 再点一次或按 Esc 还原</b>` : lg('acc', '进行中') + lg('review', 'Review') + lg('block', 'Block') + lg('wire', '关联');
+  $('hint').innerHTML = G.spot.size ? '<b>Tasks changed and were brought to the front · click anywhere or press Esc to restore</b>' : G.focus ? `<b>${esc(FOCUS.find(f => f[0] === G.focus)[1])} brought to the front · click again or press Esc to restore</b>` : lg('acc', 'In progress') + lg('review', 'Review') + lg('block', 'Blocked') + lg('wire', 'Related');
 }
 
 /* ---- 每帧：节点位置 + 画线 ---- */
@@ -849,7 +849,7 @@ const ring = (id, c, delay = 0) => { if (G.nodes.has(id)) for (let i = 0; i < 3;
 /* ---- 核心圆：Claude 用量（本机 Claude Code 会话记录里的 token 数） ---- */
 const SPARK = '<svg class="spark" viewBox="-13 -13 26 26">' + [12, 8.6, 11, 9.2, 12, 8.2, 11.4, 9.6, 12, 8.4, 10.8, 9].map((r, i) => { const a = i * Math.PI / 6 + .13;
   return `<line x1="${(Math.cos(a) * 2.6).toFixed(2)}" y1="${(Math.sin(a) * 2.6).toFixed(2)}" x2="${(Math.cos(a) * r).toFixed(2)}" y2="${(Math.sin(a) * r).toFixed(2)}" stroke="#d97757" stroke-width="2.3" stroke-linecap="round"/>`; }).join('') + '</svg>';
-const QWIN = [['five_hour', '5H', '近 5 小时', 'acc'], ['seven_day', '周', '本周', 'wire']];
+const QWIN = [['five_hour', '5H', 'Last 5 hours', 'acc'], ['seven_day', 'WK', 'This week', 'wire']];
 const left = w => Math.round(clamp(1 - w.used, 0, 1) * 100);
 const resetAt = ts => ts ? new Date(ts * 1000 + 8 * 3600e3).toISOString().slice(5, 16).replace('T', ' ') : '—';
 function coreView(){
@@ -857,54 +857,54 @@ function coreView(){
   const u = UI.usage, q = u && u.quota;
   if (!u){ n.el.innerHTML = SPARK + '<b class="cw">Claude</b><span class="cl">SCANNING…</span>'; return; }
   const wins = QWIN.filter(([k]) => q && q[k]);
-  n.el.title = (wins.length ? wins.map(([k, , zh]) => `${zh}余量 ${left(q[k])}%，${resetAt(q[k].resets_at)} 重置`).join('；') + '。' : '还没取到订阅余量。')
-    + (u.model ? `当前模型 ${u.model}。` : '') + '圆里的扇形：内圈是近 5 小时余量，外圈是本周余量；圆环外圈是近 24 小时每小时输出的 token。点开看明细';
+  n.el.title = (wins.length ? wins.map(([k, , zh]) => `${zh}: ${left(q[k])}% left, resets ${resetAt(q[k].resets_at)}`).join('; ') + '. ' : 'No subscription quota yet. ')
+    + (u.model ? `Current model ${u.model}. ` : '') + 'Sectors: inner ring is the 5-hour quota left, outer ring the weekly quota left; bars around the ring are output tokens per hour over the last 24 hours. Click for details';
   n.el.innerHTML = SPARK + '<b class="cw">Claude</b>'
     + (wins.length ? `<span class="cq">${wins.map(([k, s, , c]) => `<span style="--c:var(--${left(q[k]) < 20 ? 'block' : c})">${s} <b>${left(q[k])}%</b></span>`).join('')}</span>`
       : u.model ? `<span class="cq"><span style="--c:var(--dim)">5H <b>${tok(sum(u.win5h))}</b></span></span>` : '')
-    + (u.model ? `<span class="cl">${u.active ? `<span class="eq"><i></i><i></i><i></i></span>${u.active} · ` : ''}今天 ${tok(sum(u.today))}</span>` : '<span class="cl">NO DATA</span>');
+    + (u.model ? `<span class="cl">${u.active ? `<span class="eq"><i></i><i></i><i></i></span>${u.active} · ` : ''}Today ${tok(sum(u.today))}</span>` : '<span class="cl">NO DATA</span>');
   if (UI.sel === 'core') drawer();
 }
 function usageHTML(){
-  const u = UI.usage; if (!u || !u.model) return '<div class="none">NO DATA · 近 7 天没有会话记录</div>';
-  const q = u.quota, quota = q ? `<div class="sec" style="margin-top:0"><span class="lbl">Quota · <b>订阅余量</b></span></div>` + QWIN.filter(([k]) => q[k]).map(([k, , zh, c]) =>
-    `<div class="mrow"><span>${zh} · 已用 ${100 - left(q[k])}% · ${resetAt(q[k].resets_at)} 重置</span><b style="font-weight:500">余 ${left(q[k])}%</b><div class="bar" style="height:4px"><i style="width:${left(q[k])}%;background:var(--${left(q[k]) < 20 ? 'block' : c})"></i></div></div>`).join('')
-    + `<div class="lbl" style="margin-top:8px;letter-spacing:.06em;text-transform:none">${resetAt(q.at)} 查的，约每 15 分钟更新一次</div><div class="sec"><span class="lbl">Tokens · <b>本机用量</b></span></div>` : '';
-  const t = u.today, parts = [['输出', t.out, 'var(--acc)'], ['输入', t.in, 'var(--text)'], ['写缓存', t.cw, 'var(--dim)'], ['读缓存', t.cr, 'var(--ghost)']];
+  const u = UI.usage; if (!u || !u.model) return '<div class="none">NO DATA · no sessions in the last 7 days</div>';
+  const q = u.quota, quota = q ? `<div class="sec" style="margin-top:0"><span class="lbl">Quota · <b>Subscription</b></span></div>` + QWIN.filter(([k]) => q[k]).map(([k, , zh, c]) =>
+    `<div class="mrow"><span>${zh} · ${100 - left(q[k])}% used · resets ${resetAt(q[k].resets_at)}</span><b style="font-weight:500">${left(q[k])}% left</b><div class="bar" style="height:4px"><i style="width:${left(q[k])}%;background:var(--${left(q[k]) < 20 ? 'block' : c})"></i></div></div>`).join('')
+    + `<div class="lbl" style="margin-top:8px;letter-spacing:.06em;text-transform:none">checked ${resetAt(q.at)}, refreshed about every 15 minutes</div><div class="sec"><span class="lbl">Tokens · <b>This machine</b></span></div>` : '';
+  const t = u.today, parts = [['Output', t.out, 'var(--acc)'], ['Input', t.in, 'var(--text)'], ['Cache write', t.cw, 'var(--dim)'], ['Cache read', t.cr, 'var(--ghost)']];
   const total = sum(t) || 1, hmax = Math.max(1, ...u.hours.map(h => h.out)), dmax = Math.max(1, ...u.days.map(sum)), mmax = Math.max(1, ...u.models.map(sum));
-  return quota + `<div class="um"><div class="lbl">当前模型 · <b>最近请求 ${esc(u.last)}</b></div><div class="model">${esc(u.model)}</div>
-    <div class="two"><div><div class="lbl">今天 · <b>${t.n} 次请求</b></div><div class="big">${tok(sum(t))}<small>tokens</small></div></div>
-      <div><div class="lbl">近 5 小时 · <b>${u.win5h.n} 次</b></div><div class="big">${tok(sum(u.win5h))}<small>tokens</small></div></div></div>
+  return quota + `<div class="um"><div class="lbl">Current model · <b>last request ${esc(u.last)}</b></div><div class="model">${esc(u.model)}</div>
+    <div class="two"><div><div class="lbl">Today · <b>${t.n} requests</b></div><div class="big">${tok(sum(t))}<small>tokens</small></div></div>
+      <div><div class="lbl">Last 5 hours · <b>${u.win5h.n} requests</b></div><div class="big">${tok(sum(u.win5h))}<small>tokens</small></div></div></div>
     <div class="stack">${parts.map(([l, v, c]) => `<i style="flex:${v / total};background:${c}" title="${l} ${v.toLocaleString('en-US')}"></i>`).join('')}</div>
     <div class="legend">${parts.map(([l, v, c]) => `<span style="--c:${c}">${l}<b>${tok(v)}</b></span>`).join('')}</div></div>
-    <div class="sec"><span class="lbl">24h · <b>每小时输出 token</b></span></div>
-    <div class="bars">${u.hours.map((h, i) => `<i class="${i === 23 ? 'now' : h.out ? 'v' : ''}" style="height:${Math.max(3, h.out / hmax * 100)}%" title="${h.h}:00 输出 ${h.out.toLocaleString('en-US')}，${h.n} 次请求"></i>`).join('')}</div>
-    <div class="axis"><span>${u.hours[0].h}:00</span><span>${u.hours[8].h}:00</span><span>${u.hours[16].h}:00</span><span>现在</span></div>
-    <div class="sec"><span class="lbl">7d · <b>每天总 token</b></span></div>
-    <div class="bars" style="gap:8px;height:50px">${u.days.map((d, i) => `<i class="${i === 6 ? 'now' : sum(d) ? 'v' : ''}" style="height:${Math.max(3, sum(d) / dmax * 100)}%" title="${d.d} 共 ${sum(d).toLocaleString('en-US')}，${d.n} 次请求"></i>`).join('')}</div>
-    <div class="axis">${u.days.map(d => `<span>${d.d.slice(3)}日 ${tok(sum(d))}</span>`).filter((_, i) => i % 2 === 0).join('')}</div>
-    ${u.models.length ? '<div class="sec"><span class="lbl">Models · <b>今天各模型</b></span></div>' + u.models.map(m => `<div class="mrow"><span>${esc(m.model)}</span><b style="font-weight:400">${tok(sum(m))}</b><div class="bar"><i style="width:${sum(m) / mmax * 100}%"></i></div></div>`).join('') : ''}`;
+    <div class="sec"><span class="lbl">24h · <b>Output tokens per hour</b></span></div>
+    <div class="bars">${u.hours.map((h, i) => `<i class="${i === 23 ? 'now' : h.out ? 'v' : ''}" style="height:${Math.max(3, h.out / hmax * 100)}%" title="${h.h}:00 output ${h.out.toLocaleString('en-US')}, ${h.n} requests"></i>`).join('')}</div>
+    <div class="axis"><span>${u.hours[0].h}:00</span><span>${u.hours[8].h}:00</span><span>${u.hours[16].h}:00</span><span>now</span></div>
+    <div class="sec"><span class="lbl">7d · <b>Tokens per day</b></span></div>
+    <div class="bars" style="gap:8px;height:50px">${u.days.map((d, i) => `<i class="${i === 6 ? 'now' : sum(d) ? 'v' : ''}" style="height:${Math.max(3, sum(d) / dmax * 100)}%" title="${d.d} total ${sum(d).toLocaleString('en-US')}, ${d.n} requests"></i>`).join('')}</div>
+    <div class="axis">${u.days.map(d => `<span>${d.d.slice(3)} ${tok(sum(d))}</span>`).filter((_, i) => i % 2 === 0).join('')}</div>
+    ${u.models.length ? '<div class="sec"><span class="lbl">Models · <b>Today by model</b></span></div>' + u.models.map(m => `<div class="mrow"><span>${esc(m.model)}</span><b style="font-weight:400">${tok(sum(m))}</b><div class="bar"><i style="width:${sum(m) / mmax * 100}%"></i></div></div>`).join('') : ''}`;
 }
 
 /* ---- 顶栏、按钮、底部面板 ---- */
-const FOCUS = [['doing', '进行中', 'acc'], ['review', 'REVIEW', 'review'], ['blocked', 'BLOCK', 'block'], ['todo', '未开始', 'todo'], ['project', '项目', 'wire'], ['skill', 'SKILL', 'wire'], ['done', '已完成', 'ok']];
+const FOCUS = [['doing', 'IN PROGRESS', 'acc'], ['review', 'REVIEW', 'review'], ['blocked', 'BLOCKED', 'block'], ['todo', 'TO DO', 'todo'], ['project', 'PROJECTS', 'wire'], ['skill', 'SKILLS', 'wire'], ['done', 'DONE', 'ok']];
 function render(){
   const st = UI.state, all = st.tasks, n = s => all.filter(t => t.status === s).length;
   const cnt = {doing:n('doing'), review:n('review'), blocked:n('blocked'), todo:n('todo') + n('other'), project:st.projects.filter(p => p.id !== NONE).length, skill:(st.skills || []).length, done:n('done')};
-  $('filters').innerHTML = `<button class="fb all" data-focus=""><i></i>全部<kbd>0</kbd></button>` + FOCUS.map(([k, l, c], i) =>
+  $('filters').innerHTML = `<button class="fb all" data-focus=""><i></i>ALL<kbd>0</kbd></button>` + FOCUS.map(([k, l, c], i) =>
     `<button class="fb${cnt[k] ? '' : ' zero'}" data-focus="${k}" style="--c:var(--${c})"><i></i>${l}<b>${cnt[k]}</b><kbd>${i + 1}</kbd></button>`).join('');
   const doing = all.filter(t => t.status === 'doing');
   $('hk').innerHTML = [['Projects', cnt.project], ['Open', all.filter(isOpen).length], ['Now', doing.length ? doing.map(t => t.id || '·').join(' ') : '—', 'now'], ['Skills', cnt.skill], ['Shipped', cnt.done]]
     .map(([l, v, c]) => `<div class="${c || ''}"><span class="lbl">${l}</span><b>${esc(v)}</b></div>`).join('');
   const names = Object.fromEntries(st.projects.map(p => [p.id, p.name]));
   const open = all.filter(isOpen).sort((a, b) => ORDER[a.status] - ORDER[b.status] || b.date.localeCompare(a.date));
-  $('queue').innerHTML = open.length ? open.map(t => `<div class="q ${t.status}" data-open="t:${esc(tkey(t))}"><i></i><b>${esc(t.id || '')}</b><span class="tt">${esc(plain(t.title))}</span><span class="pj2">${esc(t.projects[0] === NONE ? NAME[t.status] : (names[t.projects[0]] || t.projects[0]))}</span></div>`).join('') : '<div class="none">ALL CLEAR · 没有未完成的任务</div>';
-  $('qn').textContent = open.length + ' 条';
+  $('queue').innerHTML = open.length ? open.map(t => `<div class="q ${t.status}" data-open="t:${esc(tkey(t))}"><i></i><b>${esc(t.id || '')}</b><span class="tt">${esc(plain(t.title))}</span><span class="pj2">${esc(t.projects[0] === NONE ? NAME[t.status] : (names[t.projects[0]] || t.projects[0]))}</span></div>`).join('') : '<div class="none">ALL CLEAR · no open tasks</div>';
+  $('qn').textContent = open.length + ' items';
   const list = model().filter(p => p.tasks.length).sort((a, b) => b.open.length - a.open.length || b.tasks.length - a.tasks.length), max = Math.max(1, ...list.map(p => p.tasks.length));
   const html = list.map(p => { const by = {}; for (const t of p.tasks) by[t.status] = (by[t.status] || 0) + 1;
     return `<div class="ld" data-open="p:${esc(p.id)}"><span class="nm">${esc(pname(p))}</span><span class="segs" style="width:${Math.max(8, p.tasks.length / max * 100)}%">${['review', 'doing', 'blocked', 'todo', 'other', 'done', 'cancelled'].filter(s => by[s]).map(s => `<i style="flex:${by[s]};--c:${s === 'done' || s === 'cancelled' ? 'var(--ghost)' : COLOR[s]}"></i>`).join('')}</span><b><em>${p.open.length}</em>/${p.tasks.length}</b></div>`; }).join('');
   if (html !== UI.loadHTML) $('load').innerHTML = UI.loadHTML = html;
-  $('ln').textContent = '未完成 / 全部';
+  $('ln').textContent = 'open / all';
   build(); feed(); fuPanel();
   $('sync').textContent = 'SYNC ' + st.generated.slice(11);
   if (UI.sel) drawer();
@@ -915,17 +915,17 @@ function fuPanel(){
   const f = UI.state?.followup; if (!f) return;
   const tasks = UI.state.tasks, byId = Object.fromEntries(tasks.filter(t => t.id).map(t => [t.id, t]));
   const stale = !f.last_tick || Date.now() - bjMs(f.last_tick) > 30 * 6e4, err = (f.errors || []).length;
-  const sv = f.active === false ? ['stale', '服务停了'] : stale ? ['stale', f.last_tick ? '上一轮 ' + f.last_tick.slice(11) + ' · 久未运行' : '还没跑完第一轮']
-    : err ? ['err', '上一轮 ' + f.last_tick.slice(11) + ' · ' + err + ' 个报错'] : ['ok', '运行中 · 上一轮 ' + f.last_tick.slice(11)];
+  const sv = f.active === false ? ['stale', 'service stopped'] : stale ? ['stale', f.last_tick ? 'last run ' + f.last_tick.slice(11) + ' · overdue' : 'not run yet']
+    : err ? ['err', 'last run ' + f.last_tick.slice(11) + ' · ' + err + ' errors'] : ['ok', 'running · last run ' + f.last_tick.slice(11)];
   $('fsv').className = 'fsv ' + sv[0]; $('fsv').innerHTML = `<i></i>${esc(sv[1])}`;
   const items = [...f.items].sort((a, b) => (a.until || '9').localeCompare(b.until || '9'));
   $('fus').innerHTML = items.length ? items.map(x => { const t = byId[x.task], [lt, late] = fuLeft(x.until);
-    const tip = [x.title, '条件：' + x.cond, '做什么：' + (x.action || ''), x.until ? '截止：' + x.until : '', x.last_check ? '上次检查：' + x.last_check : '', x.last_error ? '检查结果：' + x.last_error : ''].filter(Boolean).join('\n');
-    return `<div class="fr"${t ? ` data-open="t:${esc(tkey(t))}"` : ''} title="${esc(tip)}"><b>${esc(x.id)}</b><em>${esc(x.task || '—')}</em><span class="tt">${esc(x.title)}</span><span class="cd${x.paused ? ' err' : late ? ' late' : ''}">${x.paused ? '已暂停' : lt}</span><span class="cn">${esc(x.cond)}${x.last_check ? ' · 查过 ' + esc(x.last_check.slice(11)) : ''}</span></div>`; }).join('')
-    : '<div class="none">没有跟进项</div>';
+    const tip = [x.title, 'Condition: ' + x.cond, 'Then: ' + (x.action || ''), x.until ? 'Until: ' + x.until : '', x.last_check ? 'Last checked: ' + x.last_check : '', x.last_error ? 'Result: ' + x.last_error : ''].filter(Boolean).join('\n');
+    return `<div class="fr"${t ? ` data-open="t:${esc(tkey(t))}"` : ''} title="${esc(tip)}"><b>${esc(x.id)}</b><em>${esc(x.task || '—')}</em><span class="tt">${esc(x.title)}</span><span class="cd${x.paused ? ' err' : late ? ' late' : ''}">${x.paused ? 'paused' : lt}</span><span class="cn">${esc(x.cond)}${x.last_check ? ' · checked ' + esc(x.last_check.slice(11)) : ''}</span></div>`; }).join('')
+    : '<div class="none">No watched items</div>';
   const tm = f.teams || {};
-  $('fft').innerHTML = `<div>Teams 收件箱${tm.paused ? '（暂停）' : ''}：排队 ${tm.queue || 0} · 今天处理 ${tm.done_today || 0} · 失败 ${tm.failed || 0}</div>`
-    + (err ? `<div class="e" title="${esc(f.errors.join('\n'))}">报错：${esc(f.errors[0])}</div>` : '');
+  $('fft').innerHTML = `<div>Inbox${tm.paused ? ' (paused)' : ''}: queued ${tm.queue || 0} · handled today ${tm.done_today || 0} · failed ${tm.failed || 0}</div>`
+    + (err ? `<div class="e" title="${esc(f.errors.join('\n'))}">Error: ${esc(f.errors[0])}</div>` : '');
 }
 
 /* ---- 事件流：新事件从顶部滑入，提到的任务节点起一圈波纹 ---- */
@@ -933,16 +933,16 @@ function feed(){
   const evs = UI.state.events || [], key = e => e.date + '|' + e.time + '|' + e.text;
   const now = new Set(evs.map(key)), box = $('evs'), top = box.scrollTop;
   const td = today(), ids = new Set(UI.state.tasks.map(t => t.id).filter(Boolean));
-  const link = h => h.split(/(<[^>]+>)/).map(x => x[0] === '<' ? x : x.replace(/\bT-\d+\b/g, m => ids.has(m) ? `<b class="tref" data-open="t:${m}" title="打开任务 ${m}">${m}</b>` : m)).join('');
+  const link = h => h.split(/(<[^>]+>)/).map(x => x[0] === '<' ? x : x.replace(/\bT-\d+\b/g, m => ids.has(m) ? `<b class="tref" data-open="t:${m}" title="Open task ${m}">${m}</b>` : m)).join('');
   let day = '', html = '', fresh = 0;
   for (const e of evs){
     const isNew = UI.evPrev && !UI.evPrev.has(key(e));
     if (isNew){ fresh++; const hit = (e.text.match(/\bT-\d+\b/g) || []).filter(m => G.nodes.has('t:' + m)); if (hit.length) hit.forEach(m => ring('t:' + m, 'acc')); else ring('core', 'acc'); }
-    if (e.date !== day){ day = e.date; html += `<div class="evd${day === td ? ' now' : ''}">${day === td ? '今天 · ' : ''}${day}</div>`; }
+    if (e.date !== day){ day = e.date; html += `<div class="evd${day === td ? ' now' : ''}">${day === td ? 'Today · ' : ''}${day}</div>`; }
     html += `<div class="ev${e.date === td ? ' today' : ''}${isNew ? ' in' : ''}"><span class="t">${e.time}</span><div class="md">${link(inline(e.text))}</div></div>`;
   }
   if (!UI.evPrev || fresh || now.size !== UI.evPrev.size){ box.innerHTML = html || '<div class="none">NO EVENTS</div>'; box.scrollTop = fresh ? 0 : top; }
-  $('evn').textContent = evs.length ? evs.length + ' 条' : '';
+  $('evn').textContent = evs.length ? evs.length + ' items' : '';
   UI.evPrev = now;
 }
 
@@ -954,25 +954,25 @@ function drawer(){
   const [k, id] = UI.sel === 'core' ? ['u'] : [UI.sel[0], UI.sel.slice(2)], D = $('drawer');
   const top = D.querySelector('.ab')?.scrollTop || 0, same = D.dataset.key === UI.sel;
   let html = null;
-  if (k === 'u') html = shell('CLAUDE', 'var(--acc)', '<span class="lbl">本机 Claude Code 会话记录</span>', 'Claude 用量', usageHTML());
+  if (k === 'u') html = shell('CLAUDE', 'var(--acc)', '<span class="lbl">Local Claude Code session records</span>', 'Claude usage', usageHTML());
   else if (k === 'p'){
     const p = model().find(x => x.id === id);
     if (p){ const logs = (UI.logAll.has(p.id) ? p.log : p.log.slice(0, 3)).map(e => `<div class="lg"><div class="d">${e.date}</div><div class="md">${md(e.body)}</div></div>`).join('')
-        + (p.log.length > 3 ? `<button class="btn" style="margin:10px 0 0 21px" data-more="${esc(p.id)}">${UI.logAll.has(p.id) ? '收起' : '更早的 ' + (p.log.length - 3) + ' 天'}</button>` : '');
+        + (p.log.length > 3 ? `<button class="btn" style="margin:10px 0 0 21px" data-more="${esc(p.id)}">${UI.logAll.has(p.id) ? 'Show less' : (p.log.length - 3) + ' earlier days'}</button>` : '');
       const sk = (UI.state.skills || []).filter(s => s.projects.includes(p.id));
       html = shell('PROJECT', 'var(--wire)', `<span class="lbl">${p.id === NONE ? '' : 'projects/' + esc(p.id) + '.md'}</span>`, esc(p.name),
         `<div class="md"><p>${esc(p.description)}</p></div>${p.aliases.length ? `<div class="lbl" style="letter-spacing:.06em;text-transform:none">${esc(p.aliases.join(' · '))}</div>` : ''}
-        ${p.open.length ? sec('Open', '未完成 ' + p.open.length) + p.open.map(mini).join('') : ''}
-        ${sk.length ? sec('Skills', '相关 skill') + sk.map(s => `<div class="mini" data-open="s:${esc(s.id)}"><span class="ck" style="color:var(--wire)">◆</span><span class="tt">${esc(s.id)}</span><span class="dt">${s.uses} 次提到</span></div>`).join('') : ''}
-        ${p.log.length ? sec('Log', '项目日志 · 共 ' + p.log.length + ' 天') + logs : ''}
-        ${p.closed.length ? sec('Closed', '已完成 / 已取消 ' + p.closed.length) + p.closed.map(mini).join('') : ''}`); }
+        ${p.open.length ? sec('Open', p.open.length + ' open') + p.open.map(mini).join('') : ''}
+        ${sk.length ? sec('Skills', 'Related skills') + sk.map(s => `<div class="mini" data-open="s:${esc(s.id)}"><span class="ck" style="color:var(--wire)">◆</span><span class="tt">${esc(s.id)}</span><span class="dt">${s.uses} mentions</span></div>`).join('') : ''}
+        ${p.log.length ? sec('Log', 'Project log · ' + p.log.length + ' days') + logs : ''}
+        ${p.closed.length ? sec('Closed', p.closed.length + ' done / cancelled') + p.closed.map(mini).join('') : ''}`); }
   } else if (k === 's'){
     const s = (UI.state.skills || []).find(x => x.id === id);
     if (s){ const names = Object.fromEntries(UI.state.projects.map(p => [p.id, p.name])), ts = UI.state.tasks.filter(t => (t.skills || []).includes(s.id));
       html = shell('SKILL', 'var(--wire)', `<span class="lbl">skills/${esc(s.id)}/SKILL.md</span>`, esc(s.id),
-        `<div class="md"><p>${esc(s.description)}</p></div><div class="lbl" style="letter-spacing:.06em;text-transform:none">在任务和项目日志里被提到 ${s.uses} 次</div>
-        ${s.projects.length ? sec('Projects', '文档里链到的项目') + s.projects.map(pid => `<div class="mini" data-open="p:${esc(pid)}"><span class="ck" style="color:var(--wire)">▣</span><span class="tt">${esc(names[pid] || pid)}</span><span class="dt"></span></div>`).join('') : ''}
-        ${ts.length ? sec('Tasks', '提到它的任务 ' + ts.length) + ts.map(mini).join('') : ''}`); }
+        `<div class="md"><p>${esc(s.description)}</p></div><div class="lbl" style="letter-spacing:.06em;text-transform:none">Mentioned ${s.uses} times in tasks and project logs</div>
+        ${s.projects.length ? sec('Projects', 'Projects linked from the skill') + s.projects.map(pid => `<div class="mini" data-open="p:${esc(pid)}"><span class="ck" style="color:var(--wire)">▣</span><span class="tt">${esc(names[pid] || pid)}</span><span class="dt"></span></div>`).join('') : ''}
+        ${ts.length ? sec('Tasks', ts.length + ' tasks mention it') + ts.map(mini).join('') : ''}`); }
   } else {
     const t = UI.state.tasks.find(x => tkey(x) === id);
     if (t){
@@ -984,27 +984,27 @@ function drawer(){
       const doc = t.doc ? UI.docs[t.doc] : null;
       if (t.doc && doc === undefined){
         UI.docs[t.doc] = null;
-        fetch('api/doc?path=' + encodeURIComponent(t.doc)).then(r => r.ok ? r.text() : '（读不到这份详情文档）').then(x => { UI.docs[t.doc] = x; if (UI.sel === 't:' + tkey(t)) drawer(); });
+        fetch('api/doc?path=' + encodeURIComponent(t.doc)).then(r => r.ok ? r.text() : '(could not read this detail doc)').then(x => { UI.docs[t.doc] = x; if (UI.sel === 't:' + tkey(t)) drawer(); });
       }
       html = shell(esc(NAME[t.status] || t.label), COLOR[t.status] || 'var(--dim)', `${t.id ? `<span class="mono" style="font-size:13px;font-weight:600">${esc(t.id)}</span>` : ''}<span class="lbl">task/${t.date}.md:${t.line}</span>`, inline(t.title),
         `<div class="kv">
-          <div><span class="lbl">Date · <b>日期</b></span><span class="mono">${t.date} · ${age(t.date)}</span></div>
-          <div><span class="lbl">Time · <b>时间</b></span><span class="mono">${t.start || '—'}${t.end ? ' → ' + t.end : ''}</span></div>
-          <div><span class="lbl">Project · <b>项目</b></span><span>${esc(t.projects.map(pid => names[pid]?.name || pid).join('、'))}</span></div>
+          <div><span class="lbl">Date</span><span class="mono">${t.date} · ${age(t.date)}</span></div>
+          <div><span class="lbl">Time</span><span class="mono">${t.start || '—'}${t.end ? ' → ' + t.end : ''}</span></div>
+          <div><span class="lbl">Project</span><span>${esc(t.projects.map(pid => names[pid]?.name || pid).join(', '))}</span></div>
           <div><span class="lbl">ClickUp</span><span class="mono">${esc(refs.join('  ')) || '—'}</span></div>
-          ${t.type ? `<div style="grid-column:1/-1"><span class="lbl">Type · <b>类型</b></span><span>${esc(t.type)}</span></div>` : ''}${t.reporter ? `<div style="grid-column:1/-1"><span class="lbl">Reporter · <b>报告人</b></span><span>${esc(t.reporter)}</span></div>` : ''}
+          ${t.type ? `<div style="grid-column:1/-1"><span class="lbl">Type</span><span>${esc(t.type)}</span></div>` : ''}${t.reporter ? `<div style="grid-column:1/-1"><span class="lbl">Reporter</span><span>${esc(t.reporter)}</span></div>` : ''}
           ${(t.skills || []).length ? `<div style="grid-column:1/-1"><span class="lbl">Skills</span><span class="mono">${esc(t.skills.join('  '))}</span></div>` : ''}</div>
-        ${sec('Content', '任务内容')}
-        ${t.detail ? `<div class="md">${md(t.detail)}</div>` : `<div class="lbl" style="letter-spacing:.06em;text-transform:none">${t.projects[0] === NONE ? '这条任务没有补充说明' : '项目型任务只留一行，经过记在项目日志'}</div>`}
-        ${fuOf(t.id).map(f => sec('Follow-up', '跟进项 ' + esc(f.id)) + `<div class="kv">
-          <div style="grid-column:1/-1"><span class="lbl">Watch · <b>盯什么</b></span><span>${esc(f.cond)}</span></div>
-          <div><span class="lbl">Until · <b>截止</b></span><span class="mono">${esc(f.until || '不限期')} · ${fuLeft(f.until)[0]}</span></div>
-          <div><span class="lbl">Checked · <b>上次检查</b></span><span class="mono">${esc(f.last_check || '—')}</span></div>
-          ${f.paused ? `<div style="grid-column:1/-1"><span class="lbl">Paused · <b>暂停</b></span><span>${esc(f.paused)}</span></div>` : ''}
-          ${f.last_error ? `<div style="grid-column:1/-1"><span class="lbl">Result · <b>检查结果</b></span><span>${esc(f.last_error)}</span></div>` : ''}</div>
-          <div class="md"><p><b>触发后：</b>${esc(f.action || '')}</p>${f.on_expire ? `<p><b>到期：</b>${esc(f.on_expire)}</p>` : ''}</div>`).join('')}
+        ${sec('Content', 'Task notes')}
+        ${t.detail ? `<div class="md">${md(t.detail)}</div>` : `<div class="lbl" style="letter-spacing:.06em;text-transform:none">${t.projects[0] === NONE ? 'No notes on this task' : 'Project tasks stay one line; the story is in the project log'}</div>`}
+        ${fuOf(t.id).map(f => sec('Follow-up', 'Watched item ' + esc(f.id)) + `<div class="kv">
+          <div style="grid-column:1/-1"><span class="lbl">Watching</span><span>${esc(f.cond)}</span></div>
+          <div><span class="lbl">Until</span><span class="mono">${esc(f.until || 'no deadline')} · ${fuLeft(f.until)[0]}</span></div>
+          <div><span class="lbl">Last checked</span><span class="mono">${esc(f.last_check || '—')}</span></div>
+          ${f.paused ? `<div style="grid-column:1/-1"><span class="lbl">Paused</span><span>${esc(f.paused)}</span></div>` : ''}
+          ${f.last_error ? `<div style="grid-column:1/-1"><span class="lbl">Result</span><span>${esc(f.last_error)}</span></div>` : ''}</div>
+          <div class="md"><p><b>Then: </b>${esc(f.action || '')}</p>${f.on_expire ? `<p><b>On expiry: </b>${esc(f.on_expire)}</p>` : ''}</div>`).join('')}
         ${t.doc ? sec('Detail doc', esc(t.doc)) + `<div class="md">${doc ? md(doc) : '<div class="lbl">LOADING…</div>'}</div>` : ''}
-        ${related.length ? sec('Related log', '项目日志里提到 ' + esc(refs.join('、'))) + related.map(r => `<div class="rel"><div class="lbl" style="color:var(--acc);margin-bottom:4px">${r.date} · ${esc(r.project)}</div><div class="md">${md(r.body)}</div></div>`).join('') : ''}`);
+        ${related.length ? sec('Related log', 'Project log entries mentioning ' + esc(refs.join(', '))) + related.map(r => `<div class="rel"><div class="lbl" style="color:var(--acc);margin-bottom:4px">${r.date} · ${esc(r.project)}</div><div class="md">${md(r.body)}</div></div>`).join('') : ''}`);
     }
   }
   if (html === null) return closeDrawer();
@@ -1026,8 +1026,8 @@ const SPOT_MS = 20000;
 function spotlight(changes){
   for (const c of changes) G.spot.set('t:' + c.k, c);
   const rows = [...G.spot.values()].sort((a, b) => ORDER[a.s] - ORDER[b.s]);
-  $('alert').innerHTML = `<div class="at"><span class="lbl"><b>任务变化</b> · ${rows.length} 条</span><i class="bar" style="animation-duration:${SPOT_MS}ms"></i></div>` + rows.map(c =>
-    `<div class="ar" data-open="t:${esc(c.k)}" style="--c:${COLOR[c.s]}"><b>${esc(c.id || '·')}</b>${c.old ? `<span class="o">${NAME[c.old]}</span><span class="aw">→</span>` : '<span class="nw">新任务</span>'}<span class="s">${NAME[c.s]}</span><span class="tt">${esc(plain(c.title))}</span></div>`).join('');
+  $('alert').innerHTML = `<div class="at"><span class="lbl"><b>Task changes</b> · ${rows.length}</span><i class="bar" style="animation-duration:${SPOT_MS}ms"></i></div>` + rows.map(c =>
+    `<div class="ar" data-open="t:${esc(c.k)}" style="--c:${COLOR[c.s]}"><b>${esc(c.id || '·')}</b>${c.old ? `<span class="o">${NAME[c.old]}</span><span class="aw">→</span>` : '<span class="nw">NEW</span>'}<span class="s">${NAME[c.s]}</span><span class="tt">${esc(plain(c.title))}</span></div>`).join('');
   $('alert').classList.add('on');
   clearTimeout(G.spotT); G.spotT = setTimeout(clearSpot, SPOT_MS);
   paint();
@@ -1037,7 +1037,7 @@ function spotlight(changes){
 }
 function clearSpot(){ if (!G.spot.size) return false; clearTimeout(G.spotT); G.spot.clear(); $('alert').classList.remove('on'); paint(); return true; }
 function setFull(on){
-  document.body.classList.toggle('full', on); $('fold').textContent = on ? '▴ 展开面板' : '▾ 收起面板';
+  document.body.classList.toggle('full', on); $('fold').textContent = on ? '▴ Show panels' : '▾ Hide panels';
   try { localStorage.setItem('board-full', on ? '1' : ''); } catch (e) {}
   if (on) scrollTo(0, 0);
   build();

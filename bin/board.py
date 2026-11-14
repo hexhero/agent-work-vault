@@ -166,25 +166,25 @@ def follow_cond(e: dict) -> str:
         c = e.get("clickup") or {}
         parts = []
         if c.get("status"):
-            parts.append("状态到 " + " / ".join(c["status"]))
+            parts.append("status is " + " / ".join(c["status"]))
         if c.get("comment_by"):
-            parts.append(" / ".join(c["comment_by"]) + " 新评论")
+            parts.append("new comment by " + " / ".join(c["comment_by"]))
         if c.get("comment_has"):
-            parts.append("评论含「" + "」「".join(c["comment_has"]) + "」")
+            parts.append("comment contains " + ", ".join(f'"{k}"' for k in c["comment_has"]))
         if c.get("any_change"):
-            parts.append("有任何更新")
-        return " ".join(c.get("tickets") or []) + "：" + "，或".join(parts)
+            parts.append("any update")
+        return " ".join(c.get("tickets") or []) + ": " + ", or ".join(parts)
     if e.get("source") == "teams":
         t = e.get("teams") or {}
-        parts = ["Teams " + ("帖子" if t.get("thread") else "会话" if t.get("chat") else "消息")]
+        parts = ["Teams " + ("thread" if t.get("thread") else "chat" if t.get("chat") else "message")]
         if t.get("from"):
-            parts.append(" / ".join(t["from"]) + " 发的")
+            parts.append("from " + " / ".join(t["from"]))
         if t.get("keywords"):
-            parts.append("含「" + "」「".join(t["keywords"]) + "」")
-        return "，".join(parts)
+            parts.append("containing " + ", ".join(f'"{k}"' for k in t["keywords"]))
+        return ", ".join(parts)
     if e.get("source") == "mail":
         m = e.get("mail") or {}
-        return f"邮箱 {m.get('mailbox', '')} 能读" + (f"，搜到「{'」「'.join(m['search'])}」" if m.get("search") else "")
+        return f"mailbox {m.get('mailbox', '')} readable" + (f", search finds {', '.join(m['search'])}" if m.get("search") else "")
     return ""
 
 
@@ -226,8 +226,8 @@ def build_state() -> dict:
         "aliases": p["aliases"],
         "log": load_logs(Path(p["file"]).stem),
     } for p in projects_mod.load()]
-    projects.append({"id": NO_PROJECT, "name": "非项目任务", "aliases": [], "log": [],
-                     "description": "没有链到任何项目的任务：本仓库的规则和 skill、调研、杂事。"})
+    projects.append({"id": NO_PROJECT, "name": "No project", "aliases": [], "log": [],
+                     "description": "Tasks not linked to any project: this repo's rules and skills, research, odds and ends."})
     skills = load_skills({p["id"] for p in projects})
     now = datetime.now(timezone.utc) + TZ_OFFSET
     return {"generated": now.strftime("%Y-%m-%d %H:%M:%S"), "tz_offset_min": int(TZ_OFFSET.total_seconds() // 60), "vault": ROOT.name, "projects": projects,
@@ -378,7 +378,7 @@ class Quota:
             try:
                 self.probe()
             except Exception as e:
-                print(f"[board] 额度查询失败：{e}", file=sys.stderr)
+                print(f"[board] quota check failed: {e}", file=sys.stderr)
             time.sleep(interval)
 
 
@@ -404,7 +404,7 @@ class Hub:
         try:
             payload = json.dumps(build_state(), ensure_ascii=False).encode("utf-8")
         except Exception as e:  # 文件正写到一半之类，下一轮再试
-            print(f"[board] 重建失败：{e}", file=sys.stderr)
+            print(f"[board] rebuild failed: {e}", file=sys.stderr)
             return
         with self.cond:
             self.sig, self.payload = sig, payload
@@ -427,7 +427,7 @@ class Hub:
                         self.usage_version += 1
                         self.cond.notify_all()
             except Exception as e:
-                print(f"[board] 用量统计失败：{e}", file=sys.stderr)
+                print(f"[board] usage scan failed: {e}", file=sys.stderr)
             time.sleep(interval)
 
 
@@ -508,10 +508,10 @@ class Server(ThreadingHTTPServer):
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--host", default="127.0.0.1", help="监听地址，默认只本机")
+    ap.add_argument("--host", default="127.0.0.1", help="listen address, localhost only by default")
     ap.add_argument("--port", type=int, default=8765)
-    ap.add_argument("--interval", type=float, default=1.0, help="多久检查一次文件变化（秒）")
-    ap.add_argument("--quota-interval", type=float, default=900.0, help="多久查一次订阅额度（秒），每次发一条 haiku 短请求；0 不查")
+    ap.add_argument("--interval", type=float, default=1.0, help="how often to check files for changes (seconds)")
+    ap.add_argument("--quota-interval", type=float, default=900.0, help="how often to check the subscription quota (seconds), one short haiku request each time; 0 disables")
     args = ap.parse_args()
 
     HUB.refresh()
@@ -520,7 +520,7 @@ def main() -> int:
     if args.quota_interval > 0:
         threading.Thread(target=QUOTA.watch, args=(args.quota_interval,), daemon=True).start()
     server = Server((args.host, args.port), Handler)
-    print(f"任务看板：http://{args.host}:{args.port}", flush=True)
+    print(f"Task board: http://{args.host}:{args.port}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
